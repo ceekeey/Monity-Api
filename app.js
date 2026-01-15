@@ -9,6 +9,8 @@ import profileRoute from "./routes/user.route.js";
 import { globalLimiter, authLimiter } from "./middleware/rateLimit.js";
 import connectDb from "./db.js";
 
+import { startPingJob } from "./cron/ping.job.js"; // ✅ add this
+
 dotenv.config();
 
 const app = express();
@@ -22,11 +24,14 @@ connectDb();
 // ✅ Apply global rate limit
 app.use(globalLimiter);
 
-// ✅ Apply stricter rate limit only to auth
+// ✅ Routes
 app.use("/api/auth", authLimiter, authRoute);
 app.use("/api/expensive", expensiveRoute);
 app.use("/api/user", authLimiter, profileRoute);
 
+// ✅ Start cron AFTER server boot
+startPingJob();
+
 app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+  console.log(`🚀 Server is running on port ${process.env.PORT}`);
 });

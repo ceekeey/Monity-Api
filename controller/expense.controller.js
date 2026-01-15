@@ -48,3 +48,26 @@ export const getAllExpenses = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 };
+
+export const deleteExpense = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "Expense id is required" });
+
+    const expense = await Expense.findById(id);
+    if (!expense) return res.status(404).json({ error: "Expense not found" });
+
+    if (expense.user.toString() !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: "Not authorized to delete this expense" });
+    }
+
+    await Expense.findByIdAndDelete(id);
+
+    res.status(200).json({ message: "Expense deleted", id });
+  } catch (error) {
+    console.error("Delete expense error:", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+};
