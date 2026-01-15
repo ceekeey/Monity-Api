@@ -1,7 +1,7 @@
 import cron from "node-cron";
 // If Node >= 18, fetch is global → you can remove this import
 
-const TARGET_URL = "http://localhost:5002/api/expensive/health";
+const TARGET_URL = "https://monity-api.onrender.com/api/expensive/health";
 // 👆 change to any endpoint you want to hit
 
 export const startPingJob = () => {
